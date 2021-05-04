@@ -1,5 +1,7 @@
 # Version 1.0
 
+Note: I am resubmitting because there were some small errors in the vignette that I have corrected.
+
 This is the first submission of `ttt` to CRAN.
 
 ## Test environments
