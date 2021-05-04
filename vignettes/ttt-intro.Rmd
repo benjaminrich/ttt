@@ -38,7 +38,7 @@ A non-exhaustive list includes:
 [formattable](https://CRAN.R-project.org/package=formattable),
 [pixiedust](https://CRAN.R-project.org/package=pixiedust),
 [basictabler](https://CRAN.R-project.org/package=basictabler),
-[mmtable1](https://github.com/ianmoran11/mmtable2),
+[mmtable2](https://github.com/ianmoran11/mmtable2),
 [gt](https://github.com/rstudio/gt),
 [DT](https://CRAN.R-project.org/package=DT),
 [tables](https://CRAN.R-project.org/package=tables),
@@ -301,7 +301,7 @@ ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable)
 
 ```{r, echo=F}
 css <- readLines(system.file(package="ttt", "ttt_booktabs_1.0/ttt_booktabs.css"))
-css <- gsub(".Rttt", ".Rttt-booktabs-demo", css, fixed=T)
+css <- gsub(".Rttt ", ".Rttt-booktabs-demo ", css, fixed=T)
 ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable, topclass="Rttt-booktabs-demo", css=css)
 ```
 
