@@ -76,7 +76,7 @@ render.npct <- function(x, pct, .default="") {
 #' will be dropped.
 #' @param collapse.cells If \code{TRUE} (the default), row/column header cells
 #' will be collapsed (merged) where appropriate.
-#' @param html.class A character matrix with the same dimentions as \code{text}
+#' @param html.class A character matrix with the same dimensions as \code{text}
 #' specifying a class attribute for the corresponding \code{<td>} element.
 #' @param topclass A character string to be used as \code{class} attribute for
 #' the top-level \code{<table>} element.

@@ -248,7 +248,7 @@ ttt(decrease ~ treatment, data=OrchardSprays, render=rndr.meansd)
 The default is `expand.along="rows"`, which produces the result above.  As we
 can see, the table contains an additional column with the values "Mean" and
 "SD", and each value is displayed in its own row. By default, the extra column
-is labelled "Statistic", but to change the label to "Blah" we can specify a
+is labeled "Statistic", but to change the label to "Blah" we can specify a
 named vector as follows:
 
 ```{r}

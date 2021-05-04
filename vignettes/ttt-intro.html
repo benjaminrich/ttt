@@ -1929,7 +1929,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>The default is <code>expand.along=&quot;rows&quot;</code>, which produces the result above. As we can see, the table contains an additional column with the values “Mean” and “SD”, and each value is displayed in its own row. By default, the extra column is labelled “Statistic”, but to change the label to “Blah” we can specify a named vector as follows:</p>
+<p>The default is <code>expand.along=&quot;rows&quot;</code>, which produces the result above. As we can see, the table contains an additional column with the values “Mean” and “SD”, and each value is displayed in its own row. By default, the extra column is labeled “Statistic”, but to change the label to “Blah” we can specify a named vector as follows:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="fu">c</span>(<span class="at">Blah=</span><span class="st">&quot;rows&quot;</span>))</span></code></pre></div>
 <div class="Rttt">
 <table>

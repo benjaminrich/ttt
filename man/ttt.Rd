@@ -125,7 +125,7 @@ Only applies when displaying whole \code{data.frame}.}
 
 \item{text}{A character matrix containing the textual content of each table cell.}
 
-\item{html.class}{A character matrix with the same dimentions as \code{text}
+\item{html.class}{A character matrix with the same dimensions as \code{text}
 specifying a class attribute for the corresponding \code{<td>} element.}
 }
 \value{
