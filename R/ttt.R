@@ -297,7 +297,7 @@ ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote
 #' @importFrom stats ftable
 ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, footnote,
     drop=c("both", "rows", "columns", "none"), collapse.cells=TRUE, html.class=NULL,
-    topclass=NULL, id=NULL, css=NULL) {
+    topclass=NULL, id=NULL, css=NULL, ...) {
 
     .ttt.ftable.internal(
         x              = x,

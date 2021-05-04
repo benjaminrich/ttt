@@ -71,7 +71,8 @@ ttt(x, ...)
   html.class = NULL,
   topclass = NULL,
   id = NULL,
-  css = NULL
+  css = NULL,
+  ...
 )
 }
 \arguments{
