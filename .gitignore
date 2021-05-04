@@ -1,0 +1,7 @@
+.Rhistory
+.*.swp
+*.bak
+*.tmp
+*.temp
+temp.*
+

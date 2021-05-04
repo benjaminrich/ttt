@@ -1,0 +1,16 @@
+Package: ttt
+Type: Package
+Version: 0.5
+Date: 2021-05-03
+Title: The Table Tool
+Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
+URL: https://github.com/benjaminrich/ttt
+BugReports: https://github.com/benjaminrich/ttt/issues
+Description: The Table Tool (a.k.a. "Tables! Tables! Tables!") creates formatted
+    HTML tables of in a flexible and convenient way.
+License: GPL-3
+Imports: stats,Formula,knitr,htmltools
+Suggests: rmarkdown,table1,magrittr
+VignetteBuilder: knitr
+Encoding: UTF-8
+RoxygenNote: 7.1.1

@@ -1,0 +1,39 @@
+.Rttt table {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 9pt;
+    border-collapse: collapse;
+    padding: 0px;
+    margin: 0px;
+}
+.Rttt th {
+    background-color: #ccc;
+}
+.Rttt th, .Rttt td {
+    border: 1pt solid black;
+    padding: 0.1ex 2ex;
+    text-align: center;
+    white-space:nowrap;
+}
+.Rttt .Rttt-rl {
+    text-align: left;
+}
+.Rttt caption {
+    text-align: left;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    font-weight: bold;
+}
+/* footnote */
+.Rttt tfoot tr, .Rttt tfoot tr td {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+.Rttt tfoot tr td p {
+    text-align: left;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 9pt;
+    padding: 0;
+    margin: 0;
+}
+

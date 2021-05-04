@@ -1,0 +1,22 @@
+table.custom {
+    font-family: "Lucida Console", Monaco, monospace;
+    border-collapse: collapse;
+    font-size: 9pt;
+}
+.custom th {
+    background-color: rgb(0, 100, 164);
+    color: white;
+}
+.custom .firstrow, .custom .firstrow ~ td {
+    border-top: 1pt solid black;
+}
+.custom td.rowlabel {
+    color: DarkCyan;
+    font-style: italic;
+}
+.custom td.firstrow.rowlabel {
+    background-color: yellow;
+    color: red;
+    font-size: 12pt;
+}
+
