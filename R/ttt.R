@@ -78,6 +78,12 @@ render.npct <- function(x, pct, .default="") {
 #' will be collapsed (merged) where appropriate.
 #' @param html.class A character matrix with the same dimentions as \code{text}
 #' specifying a class attribute for the corresponding \code{<td>} element.
+#' @param topclass A character string to be used as \code{class} attribute for
+#' the top-level \code{<table>} element.
+#' @param id A character string to be used as \code{id} attribute for
+#' the top-level \code{<table>} element.
+#' @param css A character string containing CSS code to be added before the
+#' top-level \code{<table>} element.
 #' @param row.names If \code{TRUE} (the default), row names will be shown in the
 #' first column of the table. Set to \code{FALSE} to suppress row names.
 #' Only applies when displaying whole \code{data.frame}.
@@ -127,7 +133,7 @@ ttt <- function(x, ...) {
 #' @importFrom Formula Formula model.part
 ttt.data.frame <- function(x, formula, ..., render, lab, caption, footnote,
     expand.along=c("rows", "columns"), drop=c("both", "rows", "columns", "none"),
-    collapse.cells=TRUE, row.names=T) {
+    collapse.cells=TRUE, topclass=NULL, id=NULL, css=NULL, row.names=T) {
 
     if (missing(formula)) {
         value <- unlist(as.list(format(x)))
@@ -143,10 +149,12 @@ ttt.data.frame <- function(x, formula, ..., render, lab, caption, footnote,
         attr(lab, ".suppressrowlabels") <- !row.names
 
         ttt.numeric(value, rowvars, colvars, render=render, lab=lab, caption=caption, footnote=footnote,
-            expand.along=expand.along, drop=drop, collapse.cells=collapse.cells, ...)
+            expand.along=expand.along, drop=drop, collapse.cells=collapse.cells,
+            topclass=topclass, id=id, css=css, ...)
     } else {
         ttt.formula(formula, x, ..., render=render, lab=lab, caption=caption, footnote=footnote,
-            expand.along=expand.along, drop=drop, collapse.cells=collapse.cells)
+            expand.along=expand.along, drop=drop, collapse.cells=collapse.cells,
+            topclass=topclass, id=id, css=css)
     }
 }
 
@@ -156,7 +164,7 @@ ttt.data.frame <- function(x, formula, ..., render, lab, caption, footnote,
 #' @importFrom Formula Formula model.part
 ttt.formula <- function(x, data, ..., render, lab, caption, footnote,
     expand.along=c("rows", "columns"), drop=c("both", "rows", "columns", "none"),
-    collapse.cells=TRUE) {
+    collapse.cells=TRUE, topclass=NULL, id=NULL, css=NULL) {
 
     dummy <- NULL
     if (is.character(x[[2]])) {
@@ -199,7 +207,8 @@ ttt.formula <- function(x, data, ..., render, lab, caption, footnote,
     }
 
     ttt.numeric(x, rowvars, colvars, render=render, lab=lab, caption=caption, footnote=footnote,
-        expand.along=expand.along, drop=drop, collapse.cells=collapse.cells, ...)
+        expand.along=expand.along, drop=drop, collapse.cells=collapse.cells,
+        topclass=topclass, id=id, css=css, ...)
 }
 
 #' @describeIn ttt The \code{numeric} method.
@@ -207,7 +216,7 @@ ttt.formula <- function(x, data, ..., render, lab, caption, footnote,
 #' @importFrom stats setNames ftable
 ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote,
     expand.along=c("rows", "columns"), drop=c("both", "rows", "columns", "none"),
-    collapse.cells=TRUE) {
+    collapse.cells=TRUE, topclass=NULL, id=NULL, css=NULL) {
 
     statslab <- names(expand.along)
     if (is.null(statslab)) {
@@ -279,14 +288,16 @@ ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote
     attributes(text) <- a
     attributes(html.class) <- a
 
-    ttt.ftable(counts, text=text, lab=lab, caption=caption, footnote=footnote, drop=drop, collapse.cells=collapse.cells, html.class=html.class)
+    ttt.ftable(counts, text=text, lab=lab, caption=caption, footnote=footnote, drop=drop,
+        collapse.cells=collapse.cells, html.class=html.class, topclass=topclass, id=id, css=css)
 }
 
 #' @describeIn ttt The \code{ftable} method.
 #' @export
 #' @importFrom stats ftable
-ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, caption, footnote,
-    drop=c("both", "rows", "columns", "none"), collapse.cells=TRUE, html.class=NULL) {
+ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, footnote,
+    drop=c("both", "rows", "columns", "none"), collapse.cells=TRUE, html.class=NULL,
+    topclass=NULL, id=NULL, css=NULL) {
 
     .ttt.ftable.internal(
         x              = x,
@@ -296,11 +307,15 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, capti
         footnote       = footnote,
         drop           = drop,
         collapse.cells = collapse.cells,
-        html.class     = html.class)
+        html.class     = html.class,
+        topclass       = topclass,
+        id             = id,
+        css            = css)
 }
 
 .ttt.ftable.internal <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, footnote,
-    drop=c("both", "rows", "columns", "none"), collapse.cells=TRUE, html.class=NULL, .suppressrowlabels=F) {
+    drop=c("both", "rows", "columns", "none"), collapse.cells=TRUE, html.class=NULL,
+    topclass=NULL, id=NULL, css=NULL) {
 
     if (!inherits(x, "ftable")) stop("'x' must be an \"ftable\" object")
     if (!all.equal(dim(x), dim(text))) stop("'x' and 'text' must be have the same dimensions")
@@ -396,6 +411,7 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, capti
     }
 
 
+    .suppressrowlabels <- FALSE
     if (!missing(lab) && !is.null(lab)) {
         .suppressrowlabels <- attr(lab, ".suppressrowlabels")
         if (is.null(.suppressrowlabels)) {
@@ -456,8 +472,26 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, capti
         tfoot <- ""
     }
 
+    if (!missing(topclass) && !is.null(topclass)) {
+        topclass <- sprintf(' class="%s"', paste0(gsub(".", "-", make.names(topclass), fixed=TRUE)), collapse=" ")
+    } else {
+        topclass <- ""
+    }
+
+    if (!missing(id) && !is.null(id)) {
+        id <- sprintf(' id="%s"', gsub(".", "-", make.names(id), fixed=TRUE))
+    } else {
+        id <- ""
+    }
+
+    if (!missing(css) && !is.null(css)) {
+        css <- sprintf('<style type="text/css">%s</style>\n', paste0(css, collapse="\n"))
+    } else {
+        css <- ""
+    }
+
     x <- paste0(
-        sprintf('\n<table>\n%s<thead>\n', caption),
+        sprintf('\n%s<table%s%s>\n%s<thead>\n', css, topclass, id, caption),
         paste0(thead, collapse=""),
         sprintf('</thead>\n%s<tbody>\n', tfoot),
         paste0(tbody, collapse=""),
@@ -476,9 +510,13 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, capti
 #' a web browser. Otherwise, the HTML code will be printed as text.
 #' @export
 print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
+    if (!(theme %in% c("default", "booktabs"))) {
+        warning(sprintf("theme %s not supported; using default", theme))
+        theme <- "default"
+    }
     if (interactive()) {
         z <- htmltools::HTML(x)
-        style <- htmltools::htmlDependency("ttt", "1.0",
+        style <- htmltools::htmlDependency(sprintf("ttt_%s", theme), "1.0",
             src=system.file(package="ttt", sprintf("ttt_%s_1.0", theme)),
             stylesheet=sprintf("ttt_%s.css", theme))
         z <- htmltools::div(class="Rttt", style, z)
@@ -499,13 +537,17 @@ print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
 #' @importFrom knitr knit_print
 #' @export
 knit_print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
+    if (!(theme %in% c("default", "booktabs"))) {
+        warning(sprintf("theme %s not supported; using default", theme))
+        theme <- "default"
+    }
     knit_to_html <-
         !is.null(knitr::opts_knit$get("rmarkdown.pandoc.to")) &&
         grepl("^html", knitr::opts_knit$get("rmarkdown.pandoc.to"))
 
     if (knit_to_html) {
         z <- htmltools::HTML(x)
-        style <- htmltools::htmlDependency("ttt", "1.0",
+        style <- htmltools::htmlDependency(sprintf("ttt_%s", theme), "1.0",
             src=system.file(package="ttt", sprintf("ttt_%s_1.0", theme)),
             stylesheet=sprintf("ttt_%s.css", theme))
         z <- htmltools::div(class="Rttt", style, z)

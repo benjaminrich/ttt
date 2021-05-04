@@ -21,6 +21,9 @@ ttt(x, ...)
   expand.along = c("rows", "columns"),
   drop = c("both", "rows", "columns", "none"),
   collapse.cells = TRUE,
+  topclass = NULL,
+  id = NULL,
+  css = NULL,
   row.names = T
 )
 
@@ -34,7 +37,10 @@ ttt(x, ...)
   footnote,
   expand.along = c("rows", "columns"),
   drop = c("both", "rows", "columns", "none"),
-  collapse.cells = TRUE
+  collapse.cells = TRUE,
+  topclass = NULL,
+  id = NULL,
+  css = NULL
 )
 
 \method{ttt}{numeric}(
@@ -48,19 +54,24 @@ ttt(x, ...)
   footnote,
   expand.along = c("rows", "columns"),
   drop = c("both", "rows", "columns", "none"),
-  collapse.cells = TRUE
+  collapse.cells = TRUE,
+  topclass = NULL,
+  id = NULL,
+  css = NULL
 )
 
 \method{ttt}{ftable}(
   x,
   text = matrix(as.character(x), nrow(x)),
-  ...,
   lab,
   caption,
   footnote,
   drop = c("both", "rows", "columns", "none"),
   collapse.cells = TRUE,
-  html.class = NULL
+  html.class = NULL,
+  topclass = NULL,
+  id = NULL,
+  css = NULL
 )
 }
 \arguments{
@@ -92,6 +103,15 @@ will be dropped.}
 
 \item{collapse.cells}{If \code{TRUE} (the default), row/column header cells
 will be collapsed (merged) where appropriate.}
+
+\item{topclass}{A character string to be used as \code{class} attribute for
+the top-level \code{<table>} element.}
+
+\item{id}{A character string to be used as \code{id} attribute for
+the top-level \code{<table>} element.}
+
+\item{css}{A character string containing CSS code to be added before the
+top-level \code{<table>} element.}
 
 \item{row.names}{If \code{TRUE} (the default), row names will be shown in the
 first column of the table. Set to \code{FALSE} to suppress row names.

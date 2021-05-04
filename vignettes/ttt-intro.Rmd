@@ -4,7 +4,7 @@ author: "Benjamin Rich"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
-    css: [style.css, vignette.css]
+    css: vignette.css
     toc: true
 vignette: >
   %\VignetteIndexEntry{Introduction to `ttt`: Formatted Tables the Easy Way}
@@ -205,7 +205,7 @@ Just to demonstrate, here is a synthetic example of a large table where both row
 and column facets are nested 3 levels deep:
 
 ```{r}
-dat <- expand.grid(
+bigtable <- expand.grid(
     R1=LETTERS[1:3],
     R2=LETTERS[4:6],
     R3=LETTERS[7:9],
@@ -213,8 +213,8 @@ dat <- expand.grid(
     C2=LETTERS[13:15],
     C3=LETTERS[16:18])
 
-dat$x <- 1:nrow(dat)
-ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=dat)
+bigtable$x <- 1:nrow(bigtable)
+ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable)
 ```
 
 ## Render functions
@@ -286,21 +286,32 @@ For fine-level control, custom styling must be used.
 
 The `ttt` package comes with 2 themes at this time: the `default` theme that
 has been used throughout this vignette so far, and the `booktabs` theme. (More
-themes may be added later.) Selecting the theme can be done using the option
-`ttt.theme`:
+themes may be added later.) Selecting the theme can be done using the
+`ttt.theme` global option:
 
-```{r}
+```{r, eval=F}
 options(ttt.theme="booktabs")  # Select the "booktabs" theme
 ```
 
-Now, when we output our large table it looks like this:
+If we select the `booktabs` theme, our large table looks like this:
 
-```{r}
-ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=dat)
+```{r, eval=F}
+ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable)
 ```
 
-```{r}
-options(ttt.theme="default")  # Select the "default" theme
+```{r, echo=F}
+css <- readLines(system.file(package="ttt", "ttt_booktabs_1.0/ttt_booktabs.css"))
+css <- gsub(".Rttt", ".Rttt-booktabs-demo", css, fixed=T)
+ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable, topclass="Rttt-booktabs-demo", css=css)
+```
+
+Note that a theme can only apply to a whole document; it is not possible to
+selectively style different tables within the same document differently using
+different themes, as we appear to have done here (but it can be done with
+custom styling, which is how it was done).
+
+```{r, eval=F}
+options(ttt.theme="default")  # Change back to the "default" theme
 ```
 
 ### Custom styling
@@ -318,6 +329,52 @@ labels have the class `Rttt-cl`. Furthermore, there are different classes for
 each *level* or nesting: `Rttt-rl-lvl1` for the first (i.e. innermost) level or
 row labels, `Rttt-rl-lvl2` for the second level, and so on, and similarly for
 the column labels with `cl` instead of `rl`.
+
+Finally, it is possible to add a `class` attribute or `id` attribute to the
+whole table, so that it may be targetted with specific CSS selectors. We can
+also pass CSS code directly to the `ttt()` function to be included with the
+table.
+
+For example, can can specify that our table has the ID `bigtable`, and then
+give it a particular (and particularly weird) style:
+
+```{r}
+css <- '
+#bigtable {
+  font-family: "Lucida Console", Monaco, monospace;
+}
+#bigtable td {
+  background-color: #eee;
+}
+#bigtable th {
+  color: blue;
+  background-color: lightblue;
+}
+#bigtable th, #bigtable td {
+  border: 2px dashed orange;
+}
+#bigtable .Rttt-rl {
+  background-color: #fff;
+  font-style: italic;
+  font-weight: bold;
+}
+#bigtable .Rttt-rl-lvl1 {
+  font-size: 12pt;
+  color: pink;
+  background-color: yellow;
+}
+#bigtable .Rttt-rl-lvl2 {
+  font-size: 14pt;
+  color: green;
+}
+#bigtable .Rttt-rl-lvl3 {
+  font-size: 18pt;
+  color: red;
+}
+'
+
+ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=bigtable, id="bigtable", css=css)
+```
 
 ### Example: conditional formatting
 
