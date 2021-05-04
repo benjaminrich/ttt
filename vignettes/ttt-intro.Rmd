@@ -58,19 +58,19 @@ dedicated to styling, and achieving the desired result can take a considerable
 amount of code and hence again, effort.
 
 This package takes a different approach. It focuses on the table structure and
-content, and leaving the formatting duties to CSS, a dedicated language that
+content, leaving the formatting duties to CSS, a dedicated language that
 was designed specifically for this purpose (the downside is that it only works
 for HTML, but we accept this inconvenience). Also, the package follows the
-philosophy of not trying to all all problems, but solving some problems well.
+philosophy of not trying to solve all problems, but solving some problems well.
 Design decisions have been made to make some things easy, at the expense of
 limiting the package's generality (while still keeping in it some sense quite
-general, as this vignette will demonstrate).  That it is not possible using
+general, as this vignette will demonstrate).  That it is not possible with
 this package to produce all conceivable tables is a given; that was never the
 intention.
 
 ## Basic Examples
 
-Before we start, we load some packages that we will be using:
+Before we start, let's load a couple of packages that we will be using:
 
 ```{r}
 library(table1, quietly=T)
@@ -81,7 +81,7 @@ It is worth taking a minute to comment on these packages. The first, `table1`,
 is like a "sister" package of `ttt` (they are both written by the same author).
 While not a strict requirement, `table1` contains some utility functions that
 can also be quite useful in conjunction  with `ttt`, so most of the time it is
-a good idea to include `table1` along with `ttt`.  The `magrittr` package
+a good idea to load `table1` along with `ttt`.  The `magrittr` package
 contains the well-known "pipe" operator that we will make use of at some point
 in this vignette, so we load that, too.
 
@@ -96,11 +96,11 @@ ttt(mtcars)
 But this is far from the typical use case. More typically, there is some
 *structure* to the data, in the sense that some columns contain *values*, while
 others contain *keys* that are used to group values according to some common
-characteristic (in a regression model, we would call these dependent and
-independent variables, respectively). We will assume that the data are in a
-"tidy" format, by which we mean that all the *values* have been placed in a
-single column (if this is not the case, there are many functions that will
-allow you to "reshape" the data accordingly).
+characteristic. We will refer to these latter columns as *facets*, borrowing a
+term from the `ggplot2` package.  We will assume that the data are in a "tidy"
+format, by which we mean that all the *values* have been placed in a single
+column (if this is not the case, there are many functions that will allow you
+to "reshape" the data accordingly).
 
 For the second example, continuing with the `mtcars` data, we would like to
 tabulate the average `mpg` (miles per gallon) by number of gears (rows) and
@@ -111,34 +111,33 @@ ttt(mpg ~ gear | cyl, data=mtcars, lab="Number of Cylinders", render=mean)
 ```
 
 Let's break this down. The first argument is a `formula` with 3 parts:
-`<values> ~ <row facet> | <column facet>`. The first part, left of `~`, is the
-column that contains the values (recall that in the "tidy" format there is only
-one such column). The second part, between `~` and `|` contains the *row
-facet*, one or more variables that define the row groupings of the table. The
-third part, right of `|` is the *column facet*, one or more variables that
-define the column groupings. (The term *facet* is borrowed from the `ggplot2`
-package, where it is used in the `facet_grid()` function to describe how the
-data should be split into a grid-like pattern.)
+`<values> ~ <row facets> | <column facets>`. The first part, to the left of the
+symbol `~`, is the name of the column that contains the values (recall that in
+the "tidy" format there is only one such column). The second part, between the
+symbols `~` and `|` contains the *row facets*, one or more variables that
+define how the values should be split into rows. The third part, to the right
+of the symbol `|` is the *column facets*, one or more variables that define how
+the values should be split into columns.
 
-Following the `formula` comes the `data` argument, which is the
-`data.frame` that contains the data that the `formula` refers to.  The
-next argument `lab` is a label placed over all the columns. The last
-argument, `render`, is a `function`. This function is called for each
-grouping of data defined by unique combinations of the row and column
-specifiers, and produces the value that appears in the corresponding
-cell of the table. Hopefully this is fairly intuitive.
+Following the `formula` comes the `data` argument, which is the `data.frame`
+that contains the data that the `formula` refers to.  The next argument `lab`
+is an optional label placed over all the columns. The last argument, `render`,
+is a `function`. This function is called for each grouping of data defined by
+unique combinations of the row and column facets, and produces the value that
+appears in the corresponding cell of the table. Hopefully this is fairly
+intuitive.
 
 Now, the above table is nice, but still not quite what we want. Here are
 the issues that need to be addressed:
 
   1. The label "gear" should be changed to "Number of Gears". 
 
-  2. One table cell contains the cryptic value "NaN" because there are
-     not cars with 8 cylinders and 4 gears in our dataset; we
-     would like this cell to remain empty instead.
+  2. One table cell contains the cryptic value "NaN" because there aren't any
+     cars with 8 cylinders and 4 gears in our dataset; we would like this cell
+     to remain empty instead.
 
   3. The number of decimal digits is different in each cell; we would
-     like it to be the same throughout the table (say 1 decimal digit).
+     like it to be the same throughout the table (1 decimal digit).
 
 Let us now address these issues.
 
@@ -153,13 +152,13 @@ rndr <- function(x, ...) {
 ttt(mpg ~ gear | cyl, data=mtcars, lab="Number of Cylinders", render=rndr)
 ```
 
-The way we addressed the first issue was to add a label to the variable
-`gear` using the `label()` function. The other 2 issues were fixed by
-defining a function `rndr()` to do the rendering.
-
+The way we addressed the first issue was to add a label to the variable `gear`
+using the `label()` function (one of the useful utility functions from the
+`table1` package). The two other issues were fixed by defining a function
+`rndr()` to do the rendering.
 
 The `ttt()` function allows the order of the `formula` data `data` arguments to
-be switched so that an alternative syntax using the `magrittr` "pipe" operator
+be switched, so that an alternative syntax using the `magrittr` "pipe" operator
 may be used:
 
 ```{r}
@@ -175,14 +174,15 @@ facet is optional; it can be omitted:
 ttt(mpg ~ gear, data=mtcars, render=rndr)
 ```
 
-The row facet is required by the formula syntax, but the value `1` is used
-to indicate no splitting by rows:
+The row facet is required by the formula syntax, but the "magic" value `1` may
+be used to indicate no splitting by rows:
 
 ```{r}
 ttt(mpg ~ 1 | cyl, data=mtcars, lab="Number of Cylinders", render=rndr)
 ```
 
-Both row and column facets can consist of more than one variable.  Here is an example with 2 row facets:
+Both row and column facets may consist of more than one variable, joined
+together by the symbol `+`.  Here is an example with 2 row facets:
 
 ```{r}
 label(mtcars$cyl) <- "Number of<br/>Cylinders"
@@ -195,12 +195,13 @@ And, similarly for 2 column facets:
 ttt(mpg ~ 1 | gear + cyl, data=mtcars, lab="Number of Cylinders/Gears", render=rndr)
 ```
 
-The order of the variables is obviously important. If we think of the `|` that
-separates the row and column facets as the "values" (i.e. the central part of
-the table), then the order makes sense: variables closer to the center (`|`)
-are grouped within variables that are farther away.
+The order of the variables is obviously important, as they define a nesting
+structure. If we think of the `|` that separates the row and column facets as
+the "values" (i.e. the central part of the table), then the order makes sense:
+variables closer to the center (`|`) are grouped within variables that are
+farther away.
 
-Just to demonstrate, here is a synthetic example of a huge table where both row
+Just to demonstrate, here is a synthetic example of a large table where both row
 and column facets are nested 3 levels deep:
 
 ```{r}
@@ -218,7 +219,7 @@ ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=dat)
 
 ## Render functions
 
-The `render` function gives a lot of flexibility, For example, instead of the
+The `render` function gives a lot of flexibility. For example, instead of the
 mean `mpg`, we can list the cars according to their gear/cylinder combination:
 
 ```{r}
@@ -226,8 +227,8 @@ ttt(rownames(mtcars) ~ gear | cyl, data=mtcars, lab="Number of Cylinders",
   render=paste, collapse="<br/>")
 ```
 
-Note that additional arguments can be  passed to the `render` function in `...`
-(as in this case `collapse`).
+Note that additional arguments can be  passed to the `render` function through `...`
+(as in this case, `collapse`).
 
 Furthermore, a `render` function can return more than one value in a named
 vector.  In this case, the argument `expand.along` also comes into play. It
@@ -236,7 +237,7 @@ rows), or the horizontally (along columns).
 
 For example, here we define a function that computes both the mean and
 standard deviation (SD), each to 3 significant digits, and apply it to the response
-variable (i.e., `decrease`) in the `OrchardSprays` dataset according to treatment:
+variable in the `OrchardSprays` dataset (i.e., `decrease`) according to treatment:
 
 ```{r}
 rndr.meansd <- function(x) signif_pad(c(Mean=mean(x), SD=sd(x)), digits=3)
@@ -264,9 +265,8 @@ Now "Mean" and "SD" each have their own column.
 
 ## Captions and footnotes
 
-A caption and footnotes can be added to the table by specifying string values
-to the `caption` and `footnote` arguments, respectively. There can be more than
-one footnote.
+A caption and one or more footnotes can be added to the table by specifying string values
+to the `caption` and `footnote` arguments, respectively:
 
 ```{r}
 ttt(decrease ~ 1 | treatment, data=OrchardSprays, render=rndr.meansd, lab="Treatment",
@@ -282,14 +282,14 @@ As mentioned in the introduction, changing the table's appearance is
 accomplished using CSS. In order to make this possible, `ttt` places "hooks" in
 the table in the form of `class` attributes on various HTML elements.
 
-The first this is that the whole table is enclosed in a `<div>` element with
-class `Rttt`. The allows specific formatting to be applied to tables output by
-`ttt` without interfering with other tables in the same document.
+The first thing to know is that the whole table is enclosed in a
+`<div class="Rttt">` element. The allows specific formatting to be applied to tables
+output by `ttt` without interfering with other tables in the same document.
 
 ### Example: conditional formatting
 
 A `render` function can actually add a `html.class` attribute to its return
-value. This value of this attribute will be assigned to the resulting HTML
+value. The value of this attribute will be assigned to the resulting HTML
 element's `class` attribute, allowing you to target that element with specific
 formatting.
 
@@ -319,7 +319,7 @@ rndr <- function(x, ...) {
 (since there are no zeros in this example, the code here cheats and treats zero
 as positive; if you don't like this, think of it as non-negative).
 
-The `render` function sets the desired class on the element. Now, we can add
+The `render` function sets the desired class on the elements. Now, we can add
 some CSS code to obtain the desired colors:
 
 ```{css, echo=TRUE}

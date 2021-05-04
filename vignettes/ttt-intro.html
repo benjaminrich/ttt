@@ -157,16 +157,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>Introduction</h2>
 <p><code>ttt</code> stands for “The Table Tool” (or, if you prefer “Tables! Tables! Tables!”). It allows you to creates formatted HTML tables of in a flexible and convenient way.</p>
 <p>Creating nice formatted tables has traditionally been a pain points with R. Over the years, however, things have gotten a lot better, with the emergence of packages that can produce nice looking tables in HTML (or LaTex or even Microsoft<sup>®</sup> Word), or which there are now a large number.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> But most of those packages treat tables just like <code>data.frames</code>, i.e. a grid of rows and columns, with very little structure. While some packages do have constructs that allow you to group columns or rows with additional headers and labels, that structure is basically superficial, tacked onto the <code>data.frame</code> after the fact. And while it may achieve the desired result it tends to require more code and by consequence, effort. Another thing that some of these packages do is they give you the flexibility to control the visual appearance or styling of the tables (fonts, colors, grid lines, spacing, etc.) directly from the R code. This is nice, but typically achieving that level of flexibility requires a pretty complex interface of functions and arguments dedicated to styling, and achieving the desired result can take a considerable amount of code and hence again, effort.</p>
-<p>This package takes a different approach. It focuses on the table structure and content, and leaving the formatting duties to CSS, a dedicated language that was designed specifically for this purpose (the downside is that it only works for HTML, but we accept this inconvenience). Also, the package follows the philosophy of not trying to all all problems, but solving some problems well. Design decisions have been made to make some things easy, at the expense of limiting the package’s generality (while still keeping in it some sense quite general, as this vignette will demonstrate). That it is not possible using this package to produce all conceivable tables is a given; that was never the intention.</p>
+<p>This package takes a different approach. It focuses on the table structure and content, leaving the formatting duties to CSS, a dedicated language that was designed specifically for this purpose (the downside is that it only works for HTML, but we accept this inconvenience). Also, the package follows the philosophy of not trying to solve all problems, but solving some problems well. Design decisions have been made to make some things easy, at the expense of limiting the package’s generality (while still keeping in it some sense quite general, as this vignette will demonstrate). That it is not possible with this package to produce all conceivable tables is a given; that was never the intention.</p>
 </div>
 <div id="basic-examples" class="section level2">
 <h2>Basic Examples</h2>
-<p>Before we start, we load some packages that we will be using:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(table1, <span class="at">quietly=</span>T)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr, <span class="at">quietly=</span>T)</span></code></pre></div>
-<p>It is worth taking a minute to comment on these packages. The first, <code>table1</code>, is like a “sister” package of <code>ttt</code> (they are both written by the same author). While not a strict requirement, <code>table1</code> contains some utility functions that can also be quite useful in conjunction with <code>ttt</code>, so most of the time it is a good idea to include <code>table1</code> along with <code>ttt</code>. The <code>magrittr</code> package contains the well-known “pipe” operator that we will make use of at some point in this vignette, so we load that, too.</p>
+<p>Before we start, let’s load a couple of packages that we will be using:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(table1, <span class="at">quietly=</span>T)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;table1&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     units, units&lt;-</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr, <span class="at">quietly=</span>T)</span></code></pre></div>
+<p>It is worth taking a minute to comment on these packages. The first, <code>table1</code>, is like a “sister” package of <code>ttt</code> (they are both written by the same author). While not a strict requirement, <code>table1</code> contains some utility functions that can also be quite useful in conjunction with <code>ttt</code>, so most of the time it is a good idea to load <code>table1</code> along with <code>ttt</code>. The <code>magrittr</code> package contains the well-known “pipe” operator that we will make use of at some point in this vignette, so we load that, too.</p>
 <p>With that out of the way, let’s start looking at what <code>ttt</code> can do, and how to use it. The types of tables that can be produced are many and varied. At its simplest, the <code>ttt()</code> function can turn a <code>data.frame</code> into an HTML table:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mtcars)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -637,14 +642,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>But this is far from the typical use case. More typically, there is some <em>structure</em> to the data, in the sense that some columns contain <em>values</em>, while others contain <em>keys</em> that are used to group values according to some common characteristic (in a regression model, we would call these dependent and independent variables, respectively). We will assume that the data are in a “tidy” format, by which we mean that all the <em>values</em> have been placed in a single column (if this is not the case, there are many functions that will allow you to “reshape” the data accordingly).</p>
+<p>But this is far from the typical use case. More typically, there is some <em>structure</em> to the data, in the sense that some columns contain <em>values</em>, while others contain <em>keys</em> that are used to group values according to some common characteristic. We will refer to these latter columns as <em>facets</em>, borrowing a term from the <code>ggplot2</code> package. We will assume that the data are in a “tidy” format, by which we mean that all the <em>values</em> have been placed in a single column (if this is not the case, there are many functions that will allow you to “reshape” the data accordingly).</p>
 <p>For the second example, continuing with the <code>mtcars</code> data, we would like to tabulate the average <code>mpg</code> (miles per gallon) by number of gears (rows) and cylinders (columns). Here is the code:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>mean)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>mean)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
 <tr>
-<th rowspan="2" class="Rttt-rlh">Number of<br/>Gears</th>
+<th rowspan="2" class="Rttt-rlh">gear</th>
 <th colspan="3" class="Rttt-lab">Number of Cylinders</th>
 </tr>
 <tr>
@@ -675,23 +680,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>Let’s break this down. The first argument is a <code>formula</code> with 3 parts: <code>&lt;values&gt; ~ &lt;row facet&gt; | &lt;column facet&gt;</code>. The first part, left of <code>~</code>, is the column that contains the values (recall that in the “tidy” format there is only one such column). The second part, between <code>~</code> and <code>|</code> contains the <em>row facet</em>, one or more variables that define the row groupings of the table. The third part, right of <code>|</code> is the <em>column facet</em>, one or more variables that define the column groupings. (The term <em>facet</em> is borrowed from the <code>ggplot2</code> package, where it is used in the <code>facet_grid()</code> function to describe how the data should be split into a grid-like pattern.)</p>
-<p>Following the <code>formula</code> comes the <code>data</code> argument, which is the <code>data.frame</code> that contains the data that the <code>formula</code> refers to. The next argument <code>lab</code> is a label placed over all the columns. The last argument, <code>render</code>, is a <code>function</code>. This function is called for each grouping of data defined by unique combinations of the row and column specifiers, and produces the value that appears in the corresponding cell of the table. Hopefully this is fairly intuitive.</p>
+<p>Let’s break this down. The first argument is a <code>formula</code> with 3 parts: <code>&lt;values&gt; ~ &lt;row facets&gt; | &lt;column facets&gt;</code>. The first part, to the left of the symbol <code>~</code>, is the name of the column that contains the values (recall that in the “tidy” format there is only one such column). The second part, between the symbols <code>~</code> and <code>|</code> contains the <em>row facets</em>, one or more variables that define how the values should be split into rows. The third part, to the right of the symbol <code>|</code> is the <em>column facets</em>, one or more variables that define how the values should be split into columns.</p>
+<p>Following the <code>formula</code> comes the <code>data</code> argument, which is the <code>data.frame</code> that contains the data that the <code>formula</code> refers to. The next argument <code>lab</code> is an optional label placed over all the columns. The last argument, <code>render</code>, is a <code>function</code>. This function is called for each grouping of data defined by unique combinations of the row and column facets, and produces the value that appears in the corresponding cell of the table. Hopefully this is fairly intuitive.</p>
 <p>Now, the above table is nice, but still not quite what we want. Here are the issues that need to be addressed:</p>
 <ol style="list-style-type: decimal">
 <li><p>The label “gear” should be changed to “Number of Gears”.</p></li>
-<li><p>One table cell contains the cryptic value “NaN” because there are not cars with 8 cylinders and 4 gears in our dataset; we would like this cell to remain empty instead.</p></li>
-<li><p>The number of decimal digits is different in each cell; we would like it to be the same throughout the table (say 1 decimal digit).</p></li>
+<li><p>One table cell contains the cryptic value “NaN” because there aren’t any cars with 8 cylinders and 4 gears in our dataset; we would like this cell to remain empty instead.</p></li>
+<li><p>The number of decimal digits is different in each cell; we would like it to be the same throughout the table (1 decimal digit).</p></li>
 </ol>
 <p>Let us now address these issues.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>gear) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Gears&quot;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">&quot;&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round_pad</span>(<span class="fu">mean</span>(x), <span class="dv">1</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>gear) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Gears&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round_pad</span>(<span class="fu">mean</span>(x), <span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -727,9 +732,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>The way we addressed the first issue was to add a label to the variable <code>gear</code> using the <code>label()</code> function. The other 2 issues were fixed by defining a function <code>rndr()</code> to do the rendering.</p>
-<p>The <code>ttt()</code> function allows the order of the <code>formula</code> data <code>data</code> arguments to be switched so that an alternative syntax using the <code>magrittr</code> “pipe” operator may be used:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<p>The way we addressed the first issue was to add a label to the variable <code>gear</code> using the <code>label()</code> function (one of the useful utility functions from the <code>table1</code> package). The two other issues were fixed by defining a function <code>rndr()</code> to do the rendering.</p>
+<p>The <code>ttt()</code> function allows the order of the <code>formula</code> data <code>data</code> arguments to be switched, so that an alternative syntax using the <code>magrittr</code> “pipe” operator may be used:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -769,7 +774,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="facets" class="section level2">
 <h2>Facets</h2>
 <p>The facets allow you to “slide-&amp;-dice” the data however you want. The column facet is optional; it can be omitted:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -794,8 +799,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>The row facet is required by the formula syntax, but the value <code>1</code> is used to indicate no splitting by rows:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<p>The row facet is required by the formula syntax, but the “magic” value <code>1</code> may be used to indicate no splitting by rows:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -817,9 +822,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>Both row and column facets can consist of more than one variable. Here is an example with 2 row facets:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>cyl) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Cylinders&quot;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
+<p>Both row and column facets may consist of more than one variable, joined together by the symbol <code>+</code>. Here is an example with 2 row facets:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>cyl) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Cylinders&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -869,7 +874,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>And, similarly for 2 column facets:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders/Gears&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders/Gears&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -906,18 +911,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>The order of the variables is obviously important. If we think of the <code>|</code> that separates the row and column facets as the “values” (i.e. the central part of the table), then the order makes sense: variables closer to the center (<code>|</code>) are grouped within variables that are farther away.</p>
-<p>Just to demonstrate, here is a synthetic example of a huge table where both row and column facets are nested 3 levels deep:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">R1=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">R2=</span>LETTERS[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">R3=</span>LETTERS[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>],</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">C1=</span>LETTERS[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>],</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">C2=</span>LETTERS[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>],</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">C3=</span>LETTERS[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>])</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(x <span class="sc">~</span> R3 <span class="sc">+</span> R2 <span class="sc">+</span> R1 <span class="sc">|</span> C1 <span class="sc">+</span> C2 <span class="sc">+</span> C3, <span class="at">data=</span>dat)</span></code></pre></div>
+<p>The order of the variables is obviously important, as they define a nesting structure. If we think of the <code>|</code> that separates the row and column facets as the “values” (i.e. the central part of the table), then the order makes sense: variables closer to the center (<code>|</code>) are grouped within variables that are farther away.</p>
+<p>Just to demonstrate, here is a synthetic example of a large table where both row and column facets are nested 3 levels deep:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">R1=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">R2=</span>LETTERS[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">R3=</span>LETTERS[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>],</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">C1=</span>LETTERS[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>],</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">C2=</span>LETTERS[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>],</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">C3=</span>LETTERS[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>])</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(x <span class="sc">~</span> R3 <span class="sc">+</span> R2 <span class="sc">+</span> R1 <span class="sc">|</span> C1 <span class="sc">+</span> C2 <span class="sc">+</span> C3, <span class="at">data=</span>dat)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1799,9 +1804,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="render-functions" class="section level2">
 <h2>Render functions</h2>
-<p>The <code>render</code> function gives a lot of flexibility, For example, instead of the mean <code>mpg</code>, we can list the cars according to their gear/cylinder combination:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(<span class="fu">rownames</span>(mtcars) <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">render=</span>paste, <span class="at">collapse=</span><span class="st">&quot;&lt;br/&gt;&quot;</span>)</span></code></pre></div>
+<p>The <code>render</code> function gives a lot of flexibility. For example, instead of the mean <code>mpg</code>, we can list the cars according to their gear/cylinder combination:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(<span class="fu">rownames</span>(mtcars) <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">render=</span>paste, <span class="at">collapse=</span><span class="st">&quot;&lt;br/&gt;&quot;</span>)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1837,12 +1842,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tbody>
 </table>
 </div>
-<p>Note that additional arguments can be passed to the <code>render</code> function in <code>...</code> (as in this case <code>collapse</code>).</p>
+<p>Note that additional arguments can be passed to the <code>render</code> function through <code>...</code> (as in this case, <code>collapse</code>).</p>
 <p>Furthermore, a <code>render</code> function can return more than one value in a named vector. In this case, the argument <code>expand.along</code> also comes into play. It determines how the multiple values are laid out, either vertically (along rows), or the horizontally (along columns).</p>
-<p>For example, here we define a function that computes both the mean and standard deviation (SD), each to 3 significant digits, and apply it to the response variable (i.e., <code>decrease</code>) in the <code>OrchardSprays</code> dataset according to treatment:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rndr.meansd <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">signif_pad</span>(<span class="fu">c</span>(<span class="at">Mean=</span><span class="fu">mean</span>(x), <span class="at">SD=</span><span class="fu">sd</span>(x)), <span class="at">digits=</span><span class="dv">3</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd)</span></code></pre></div>
+<p>For example, here we define a function that computes both the mean and standard deviation (SD), each to 3 significant digits, and apply it to the response variable in the <code>OrchardSprays</code> dataset (i.e., <code>decrease</code>) according to treatment:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rndr.meansd <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">signif_pad</span>(<span class="fu">c</span>(<span class="at">Mean=</span><span class="fu">mean</span>(x), <span class="at">SD=</span><span class="fu">sd</span>(x)), <span class="at">digits=</span><span class="dv">3</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1929,7 +1934,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>The default is <code>expand.along=&quot;rows&quot;</code>, which produces the result above. As we can see, the table contains an additional column with the values “Mean” and “SD”, and each value is displayed in its own row. By default, the extra column is labelled “Statistic”, but to change the label to “Blah” we can specify a named vector as follows:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="fu">c</span>(<span class="at">Blah=</span><span class="st">&quot;rows&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="fu">c</span>(<span class="at">Blah=</span><span class="st">&quot;rows&quot;</span>))</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -2016,7 +2021,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>The other option is <code>expand.along=&quot;columns&quot;</code>, which produces this result:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="st">&quot;columns&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="st">&quot;columns&quot;</span>)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -2077,10 +2082,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="captions-and-footnotes" class="section level2">
 <h2>Captions and footnotes</h2>
-<p>A caption and footnotes can be added to the table by specifying string values to the <code>caption</code> and <code>footnote</code> arguments, respectively. There can be more than one footnote.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">lab=</span><span class="st">&quot;Treatment&quot;</span>,</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">&quot;Mean and SD of Decrease by Treatment&quot;</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">footnote=</span><span class="fu">c</span>(<span class="st">&quot;Data: OrchardSprays&quot;</span>, <span class="st">&quot;Comment: &lt;code&gt;ttt&lt;/code&gt; is cool!&quot;</span>))</span></code></pre></div>
+<p>A caption and one or more footnotes can be added to the table by specifying string values to the <code>caption</code> and <code>footnote</code> arguments, respectively:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">lab=</span><span class="st">&quot;Treatment&quot;</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">&quot;Mean and SD of Decrease by Treatment&quot;</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">footnote=</span><span class="fu">c</span>(<span class="st">&quot;Data: OrchardSprays&quot;</span>, <span class="st">&quot;Comment: &lt;code&gt;ttt&lt;/code&gt; is cool!&quot;</span>))</span></code></pre></div>
 <div class="Rttt">
 <table>
 <caption>Mean and SD of Decrease by Treatment</caption>
@@ -2135,15 +2140,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="styling" class="section level2">
 <h2>Styling</h2>
 <p>As mentioned in the introduction, changing the table’s appearance is accomplished using CSS. In order to make this possible, <code>ttt</code> places “hooks” in the table in the form of <code>class</code> attributes on various HTML elements.</p>
-<p>The first this is that the whole table is enclosed in a <code>&lt;div&gt;</code> element with class <code>Rttt</code>. The allows specific formatting to be applied to tables output by <code>ttt</code> without interfering with other tables in the same document.</p>
+<p>The first thing to know is that the whole table is enclosed in a <code>&lt;div class=&quot;Rttt&quot;&gt;</code> element. The allows specific formatting to be applied to tables output by <code>ttt</code> without interfering with other tables in the same document.</p>
 <div id="example-conditional-formatting" class="section level3">
 <h3>Example: conditional formatting</h3>
-<p>A <code>render</code> function can actually add a <code>html.class</code> attribute to its return value. This value of this attribute will be assigned to the resulting HTML element’s <code>class</code> attribute, allowing you to target that element with specific formatting.</p>
+<p>A <code>render</code> function can actually add a <code>html.class</code> attribute to its return value. The value of this attribute will be assigned to the resulting HTML element’s <code>class</code> attribute, allowing you to target that element with specific formatting.</p>
 <p>For example, suppose we have a <code>data.frame</code> that contains some numeric values, and we want to put them in a table:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">row=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">column=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(dat))</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(value <span class="sc">~</span> row <span class="sc">|</span> column, <span class="at">data=</span>dat, <span class="at">render=</span>round_pad, <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">row=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">column=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">nrow</span>(dat))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(value <span class="sc">~</span> row <span class="sc">|</span> column, <span class="at">data=</span>dat, <span class="at">render=</span>round_pad, <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -2201,21 +2206,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>Furthermore, suppose we want the cells that contain negative values to be red, and those that contain positive values to be green. (Note: this can actually be easily accomplished using JavaScript, but that’s not the point of this example). Let’s define a <code>render</code> function for this:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">round_pad</span>(x, <span class="dv">2</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">attr</span>(y, <span class="st">&quot;html.class&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="st">&quot;neg&quot;</span>, <span class="st">&quot;pos&quot;</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    y</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">round_pad</span>(x, <span class="dv">2</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">attr</span>(y, <span class="st">&quot;html.class&quot;</span>) <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="st">&quot;neg&quot;</span>, <span class="st">&quot;pos&quot;</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    y</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>(since there are no zeros in this example, the code here cheats and treats zero as positive; if you don’t like this, think of it as non-negative).</p>
-<p>The <code>render</code> function sets the desired class on the element. Now, we can add some CSS code to obtain the desired colors:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.neg</span> {</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#990000</span><span class="op">;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#ff000030</span><span class="op">;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.pos</span> {</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#007700</span><span class="op">;</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#00ff0030</span><span class="op">;</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The <code>render</code> function sets the desired class on the elements. Now, we can add some CSS code to obtain the desired colors:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.neg</span> {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#990000</span><span class="op">;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#ff000030</span><span class="op">;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.pos</span> {</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#007700</span><span class="op">;</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span>: <span class="cn">#00ff0030</span><span class="op">;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <style type="text/css">
 .neg {
   color: #990000;
@@ -2227,7 +2232,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 }
 </style>
 <p>Finally, we generate the table:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(value <span class="sc">~</span> row <span class="sc">|</span> column, <span class="at">data=</span>dat, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(value <span class="sc">~</span> row <span class="sc">|</span> column, <span class="at">data=</span>dat, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
