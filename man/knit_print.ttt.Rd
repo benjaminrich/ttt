@@ -4,12 +4,14 @@
 \alias{knit_print.ttt}
 \title{Method for printing in a \code{knitr} context}
 \usage{
-\method{knit_print}{ttt}(x, ...)
+\method{knit_print}{ttt}(x, ..., theme = getOption("ttt.theme"))
 }
 \arguments{
 \item{x}{An object returned by \code{\link{ttt}}.}
 
 \item{...}{Further arguments passed on to \code{knitr::knit_print}.}
+
+\item{theme}{A theme (either "default" or "booktabs").}
 }
 \description{
 Method for printing in a \code{knitr} context

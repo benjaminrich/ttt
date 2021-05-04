@@ -278,6 +278,33 @@ There's not much more to say about this.
 
 ## Styling
 
+The appearance of the tables produced by `ttt` can be changed in 2 ways: using
+themes, or custom styling. Themes are easier, but don't give much flexibility.
+For fine-level control, custom styling must be used.
+
+### Themes
+
+The `ttt` package comes with 2 themes at this time: the `default` theme that
+has been used throughout this vignette so far, and the `booktabs` theme. (More
+themes may be added later.) Selecting the theme can be done using the option
+`ttt.theme`:
+
+```{r}
+options(ttt.theme="booktabs")  # Select the "booktabs" theme
+```
+
+Now, when we output our large table it looks like this:
+
+```{r}
+ttt(x ~ R3 + R2 + R1 | C1 + C2 + C3, data=dat)
+```
+
+```{r}
+options(ttt.theme="default")  # Select the "default" theme
+```
+
+### Custom styling
+
 As mentioned in the introduction, changing the table's appearance is
 accomplished using CSS. In order to make this possible, `ttt` places "hooks" in
 the table in the form of `class` attributes on various HTML elements.
@@ -285,6 +312,12 @@ the table in the form of `class` attributes on various HTML elements.
 The first thing to know is that the whole table is enclosed in a
 `<div class="Rttt">` element. The allows specific formatting to be applied to tables
 output by `ttt` without interfering with other tables in the same document.
+
+The next thing is that all row labels have the class `Rttt-rl`, and all column
+labels have the class `Rttt-cl`. Furthermore, there are different classes for
+each *level* or nesting: `Rttt-rl-lvl1` for the first (i.e. innermost) level or
+row labels, `Rttt-rl-lvl2` for the second level, and so on, and similarly for
+the column labels with `cl` instead of `rl`.
 
 ### Example: conditional formatting
 

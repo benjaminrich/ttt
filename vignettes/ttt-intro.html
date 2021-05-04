@@ -148,6 +148,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#captions-and-footnotes">Captions and footnotes</a></li>
 <li><a href="#styling">Styling</a>
 <ul>
+<li><a href="#themes">Themes</a></li>
+<li><a href="#custom-styling">Custom styling</a></li>
 <li><a href="#example-conditional-formatting">Example: conditional formatting</a></li>
 </ul></li>
 </ul>
@@ -162,16 +164,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="basic-examples" class="section level2">
 <h2>Basic Examples</h2>
 <p>Before we start, let’s load a couple of packages that we will be using:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(table1, <span class="at">quietly=</span>T)</span></code></pre></div>
-<pre><code>## 
-## Attaching package: &#39;table1&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     units, units&lt;-</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr, <span class="at">quietly=</span>T)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(table1, <span class="at">quietly=</span>T)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr, <span class="at">quietly=</span>T)</span></code></pre></div>
 <p>It is worth taking a minute to comment on these packages. The first, <code>table1</code>, is like a “sister” package of <code>ttt</code> (they are both written by the same author). While not a strict requirement, <code>table1</code> contains some utility functions that can also be quite useful in conjunction with <code>ttt</code>, so most of the time it is a good idea to load <code>table1</code> along with <code>ttt</code>. The <code>magrittr</code> package contains the well-known “pipe” operator that we will make use of at some point in this vignette, so we load that, too.</p>
 <p>With that out of the way, let’s start looking at what <code>ttt</code> can do, and how to use it. The types of tables that can be produced are many and varied. At its simplest, the <code>ttt()</code> function can turn a <code>data.frame</code> into an HTML table:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mtcars)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mtcars)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -644,12 +641,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>But this is far from the typical use case. More typically, there is some <em>structure</em> to the data, in the sense that some columns contain <em>values</em>, while others contain <em>keys</em> that are used to group values according to some common characteristic. We will refer to these latter columns as <em>facets</em>, borrowing a term from the <code>ggplot2</code> package. We will assume that the data are in a “tidy” format, by which we mean that all the <em>values</em> have been placed in a single column (if this is not the case, there are many functions that will allow you to “reshape” the data accordingly).</p>
 <p>For the second example, continuing with the <code>mtcars</code> data, we would like to tabulate the average <code>mpg</code> (miles per gallon) by number of gears (rows) and cylinders (columns). Here is the code:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>mean)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>mean)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
 <tr>
-<th rowspan="2" class="Rttt-rlh">gear</th>
+<th rowspan="2" class="Rttt-rlh">Number of<br/>Gears</th>
 <th colspan="3" class="Rttt-lab">Number of Cylinders</th>
 </tr>
 <tr>
@@ -689,14 +686,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>The number of decimal digits is different in each cell; we would like it to be the same throughout the table (1 decimal digit).</p></li>
 </ol>
 <p>Let us now address these issues.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>gear) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Gears&quot;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">&quot;&quot;</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round_pad</span>(<span class="fu">mean</span>(x), <span class="dv">1</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>gear) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Gears&quot;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>rndr <span class="ot">&lt;-</span> <span class="cf">function</span>(x, ...) {</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">&quot;&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round_pad</span>(<span class="fu">mean</span>(x), <span class="dv">1</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -734,7 +731,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>The way we addressed the first issue was to add a label to the variable <code>gear</code> using the <code>label()</code> function (one of the useful utility functions from the <code>table1</code> package). The two other issues were fixed by defining a function <code>rndr()</code> to do the rendering.</p>
 <p>The <code>ttt()</code> function allows the order of the <code>formula</code> data <code>data</code> arguments to be switched, so that an alternative syntax using the <code>magrittr</code> “pipe” operator may be used:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mtcars <span class="sc">%&gt;%</span> <span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -774,7 +771,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="facets" class="section level2">
 <h2>Facets</h2>
 <p>The facets allow you to “slide-&amp;-dice” the data however you want. The column facet is optional; it can be omitted:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -800,7 +797,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>The row facet is required by the formula syntax, but the “magic” value <code>1</code> may be used to indicate no splitting by rows:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -823,8 +820,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>Both row and column facets may consist of more than one variable, joined together by the symbol <code>+</code>. Here is an example with 2 row facets:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>cyl) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Cylinders&quot;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">label</span>(mtcars<span class="sc">$</span>cyl) <span class="ot">&lt;-</span> <span class="st">&quot;Number of&lt;br/&gt;Cylinders&quot;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -874,7 +871,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>And, similarly for 2 column facets:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders/Gears&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(mpg <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> gear <span class="sc">+</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders/Gears&quot;</span>, <span class="at">render=</span>rndr)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -913,16 +910,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>The order of the variables is obviously important, as they define a nesting structure. If we think of the <code>|</code> that separates the row and column facets as the “values” (i.e. the central part of the table), then the order makes sense: variables closer to the center (<code>|</code>) are grouped within variables that are farther away.</p>
 <p>Just to demonstrate, here is a synthetic example of a large table where both row and column facets are nested 3 levels deep:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">R1=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">R2=</span>LETTERS[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">R3=</span>LETTERS[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>],</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">C1=</span>LETTERS[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>],</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">C2=</span>LETTERS[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>],</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">C3=</span>LETTERS[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>])</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(x <span class="sc">~</span> R3 <span class="sc">+</span> R2 <span class="sc">+</span> R1 <span class="sc">|</span> C1 <span class="sc">+</span> C2 <span class="sc">+</span> C3, <span class="at">data=</span>dat)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">R1=</span>LETTERS[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>],</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">R2=</span>LETTERS[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>],</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">R3=</span>LETTERS[<span class="dv">7</span><span class="sc">:</span><span class="dv">9</span>],</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">C1=</span>LETTERS[<span class="dv">10</span><span class="sc">:</span><span class="dv">12</span>],</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">C2=</span>LETTERS[<span class="dv">13</span><span class="sc">:</span><span class="dv">15</span>],</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">C3=</span>LETTERS[<span class="dv">16</span><span class="sc">:</span><span class="dv">18</span>])</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(x <span class="sc">~</span> R3 <span class="sc">+</span> R2 <span class="sc">+</span> R1 <span class="sc">|</span> C1 <span class="sc">+</span> C2 <span class="sc">+</span> C3, <span class="at">data=</span>dat)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1805,8 +1802,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="render-functions" class="section level2">
 <h2>Render functions</h2>
 <p>The <code>render</code> function gives a lot of flexibility. For example, instead of the mean <code>mpg</code>, we can list the cars according to their gear/cylinder combination:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(<span class="fu">rownames</span>(mtcars) <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>,</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">render=</span>paste, <span class="at">collapse=</span><span class="st">&quot;&lt;br/&gt;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(<span class="fu">rownames</span>(mtcars) <span class="sc">~</span> gear <span class="sc">|</span> cyl, <span class="at">data=</span>mtcars, <span class="at">lab=</span><span class="st">&quot;Number of Cylinders&quot;</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">render=</span>paste, <span class="at">collapse=</span><span class="st">&quot;&lt;br/&gt;&quot;</span>)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1845,9 +1842,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Note that additional arguments can be passed to the <code>render</code> function through <code>...</code> (as in this case, <code>collapse</code>).</p>
 <p>Furthermore, a <code>render</code> function can return more than one value in a named vector. In this case, the argument <code>expand.along</code> also comes into play. It determines how the multiple values are laid out, either vertically (along rows), or the horizontally (along columns).</p>
 <p>For example, here we define a function that computes both the mean and standard deviation (SD), each to 3 significant digits, and apply it to the response variable in the <code>OrchardSprays</code> dataset (i.e., <code>decrease</code>) according to treatment:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rndr.meansd <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">signif_pad</span>(<span class="fu">c</span>(<span class="at">Mean=</span><span class="fu">mean</span>(x), <span class="at">SD=</span><span class="fu">sd</span>(x)), <span class="at">digits=</span><span class="dv">3</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rndr.meansd <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">signif_pad</span>(<span class="fu">c</span>(<span class="at">Mean=</span><span class="fu">mean</span>(x), <span class="at">SD=</span><span class="fu">sd</span>(x)), <span class="at">digits=</span><span class="dv">3</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -1934,7 +1931,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>The default is <code>expand.along=&quot;rows&quot;</code>, which produces the result above. As we can see, the table contains an additional column with the values “Mean” and “SD”, and each value is displayed in its own row. By default, the extra column is labelled “Statistic”, but to change the label to “Blah” we can specify a named vector as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="fu">c</span>(<span class="at">Blah=</span><span class="st">&quot;rows&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="fu">c</span>(<span class="at">Blah=</span><span class="st">&quot;rows&quot;</span>))</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -2021,7 +2018,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>The other option is <code>expand.along=&quot;columns&quot;</code>, which produces this result:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="st">&quot;columns&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">expand.along=</span><span class="st">&quot;columns&quot;</span>)</span></code></pre></div>
 <div class="Rttt">
 <table>
 <thead>
@@ -2083,9 +2080,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="captions-and-footnotes" class="section level2">
 <h2>Captions and footnotes</h2>
 <p>A caption and one or more footnotes can be added to the table by specifying string values to the <code>caption</code> and <code>footnote</code> arguments, respectively:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">lab=</span><span class="st">&quot;Treatment&quot;</span>,</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">&quot;Mean and SD of Decrease by Treatment&quot;</span>,</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">footnote=</span><span class="fu">c</span>(<span class="st">&quot;Data: OrchardSprays&quot;</span>, <span class="st">&quot;Comment: &lt;code&gt;ttt&lt;/code&gt; is cool!&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(decrease <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> treatment, <span class="at">data=</span>OrchardSprays, <span class="at">render=</span>rndr.meansd, <span class="at">lab=</span><span class="st">&quot;Treatment&quot;</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption=</span><span class="st">&quot;Mean and SD of Decrease by Treatment&quot;</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">footnote=</span><span class="fu">c</span>(<span class="st">&quot;Data: OrchardSprays&quot;</span>, <span class="st">&quot;Comment: &lt;code&gt;ttt&lt;/code&gt; is cool!&quot;</span>))</span></code></pre></div>
 <div class="Rttt">
 <table>
 <caption>Mean and SD of Decrease by Treatment</caption>
@@ -2139,8 +2136,899 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="styling" class="section level2">
 <h2>Styling</h2>
+<p>The appearance of the tables produced by <code>ttt</code> can be changed in 2 ways: using themes, or custom styling. Themes are easier, but don’t give much flexibility. For fine-level control, custom styling must be used.</p>
+<div id="themes" class="section level3">
+<h3>Themes</h3>
+<p>The <code>ttt</code> package comes with 2 themes at this time: the <code>default</code> theme that has been used throughout this vignette so far, and the <code>booktabs</code> theme. (More themes may be added later.) Selecting the theme can be done using the option <code>ttt.theme</code>:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">ttt.theme=</span><span class="st">&quot;booktabs&quot;</span>)  <span class="co"># Select the &quot;booktabs&quot; theme</span></span></code></pre></div>
+<p>Now, when we output our large table it looks like this:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ttt</span>(x <span class="sc">~</span> R3 <span class="sc">+</span> R2 <span class="sc">+</span> R1 <span class="sc">|</span> C1 <span class="sc">+</span> C2 <span class="sc">+</span> C3, <span class="at">data=</span>dat)</span></code></pre></div>
+<div class="Rttt">
+<table>
+<thead>
+<tr>
+<th rowspan="3" class="Rttt-rlh">R3</th>
+<th rowspan="3" class="Rttt-rlh">R2</th>
+<th rowspan="3" class="Rttt-rlh">R1</th>
+<th colspan="9" class="Rttt-cl Rttt-cl-lvl3">P</th>
+<th colspan="9" class="Rttt-cl Rttt-cl-lvl3">Q</th>
+<th colspan="9" class="Rttt-cl Rttt-cl-lvl3">R</th>
+</tr>
+<tr>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">M</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">N</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">O</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">M</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">N</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">O</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">M</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">N</th>
+<th colspan="3" class="Rttt-cl Rttt-cl-lvl2">O</th>
+</tr>
+<tr>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+<th class="Rttt-cl Rttt-cl-lvl1">J</th>
+<th class="Rttt-cl Rttt-cl-lvl1">K</th>
+<th class="Rttt-cl Rttt-cl-lvl1">L</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="9" class="Rttt-rl Rttt-rl-lvl3">G</td>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">D</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>1</td>
+<td>28</td>
+<td>55</td>
+<td>82</td>
+<td>109</td>
+<td>136</td>
+<td>163</td>
+<td>190</td>
+<td>217</td>
+<td>244</td>
+<td>271</td>
+<td>298</td>
+<td>325</td>
+<td>352</td>
+<td>379</td>
+<td>406</td>
+<td>433</td>
+<td>460</td>
+<td>487</td>
+<td>514</td>
+<td>541</td>
+<td>568</td>
+<td>595</td>
+<td>622</td>
+<td>649</td>
+<td>676</td>
+<td>703</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>2</td>
+<td>29</td>
+<td>56</td>
+<td>83</td>
+<td>110</td>
+<td>137</td>
+<td>164</td>
+<td>191</td>
+<td>218</td>
+<td>245</td>
+<td>272</td>
+<td>299</td>
+<td>326</td>
+<td>353</td>
+<td>380</td>
+<td>407</td>
+<td>434</td>
+<td>461</td>
+<td>488</td>
+<td>515</td>
+<td>542</td>
+<td>569</td>
+<td>596</td>
+<td>623</td>
+<td>650</td>
+<td>677</td>
+<td>704</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>3</td>
+<td>30</td>
+<td>57</td>
+<td>84</td>
+<td>111</td>
+<td>138</td>
+<td>165</td>
+<td>192</td>
+<td>219</td>
+<td>246</td>
+<td>273</td>
+<td>300</td>
+<td>327</td>
+<td>354</td>
+<td>381</td>
+<td>408</td>
+<td>435</td>
+<td>462</td>
+<td>489</td>
+<td>516</td>
+<td>543</td>
+<td>570</td>
+<td>597</td>
+<td>624</td>
+<td>651</td>
+<td>678</td>
+<td>705</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">E</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>4</td>
+<td>31</td>
+<td>58</td>
+<td>85</td>
+<td>112</td>
+<td>139</td>
+<td>166</td>
+<td>193</td>
+<td>220</td>
+<td>247</td>
+<td>274</td>
+<td>301</td>
+<td>328</td>
+<td>355</td>
+<td>382</td>
+<td>409</td>
+<td>436</td>
+<td>463</td>
+<td>490</td>
+<td>517</td>
+<td>544</td>
+<td>571</td>
+<td>598</td>
+<td>625</td>
+<td>652</td>
+<td>679</td>
+<td>706</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>5</td>
+<td>32</td>
+<td>59</td>
+<td>86</td>
+<td>113</td>
+<td>140</td>
+<td>167</td>
+<td>194</td>
+<td>221</td>
+<td>248</td>
+<td>275</td>
+<td>302</td>
+<td>329</td>
+<td>356</td>
+<td>383</td>
+<td>410</td>
+<td>437</td>
+<td>464</td>
+<td>491</td>
+<td>518</td>
+<td>545</td>
+<td>572</td>
+<td>599</td>
+<td>626</td>
+<td>653</td>
+<td>680</td>
+<td>707</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>6</td>
+<td>33</td>
+<td>60</td>
+<td>87</td>
+<td>114</td>
+<td>141</td>
+<td>168</td>
+<td>195</td>
+<td>222</td>
+<td>249</td>
+<td>276</td>
+<td>303</td>
+<td>330</td>
+<td>357</td>
+<td>384</td>
+<td>411</td>
+<td>438</td>
+<td>465</td>
+<td>492</td>
+<td>519</td>
+<td>546</td>
+<td>573</td>
+<td>600</td>
+<td>627</td>
+<td>654</td>
+<td>681</td>
+<td>708</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">F</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>7</td>
+<td>34</td>
+<td>61</td>
+<td>88</td>
+<td>115</td>
+<td>142</td>
+<td>169</td>
+<td>196</td>
+<td>223</td>
+<td>250</td>
+<td>277</td>
+<td>304</td>
+<td>331</td>
+<td>358</td>
+<td>385</td>
+<td>412</td>
+<td>439</td>
+<td>466</td>
+<td>493</td>
+<td>520</td>
+<td>547</td>
+<td>574</td>
+<td>601</td>
+<td>628</td>
+<td>655</td>
+<td>682</td>
+<td>709</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>8</td>
+<td>35</td>
+<td>62</td>
+<td>89</td>
+<td>116</td>
+<td>143</td>
+<td>170</td>
+<td>197</td>
+<td>224</td>
+<td>251</td>
+<td>278</td>
+<td>305</td>
+<td>332</td>
+<td>359</td>
+<td>386</td>
+<td>413</td>
+<td>440</td>
+<td>467</td>
+<td>494</td>
+<td>521</td>
+<td>548</td>
+<td>575</td>
+<td>602</td>
+<td>629</td>
+<td>656</td>
+<td>683</td>
+<td>710</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>9</td>
+<td>36</td>
+<td>63</td>
+<td>90</td>
+<td>117</td>
+<td>144</td>
+<td>171</td>
+<td>198</td>
+<td>225</td>
+<td>252</td>
+<td>279</td>
+<td>306</td>
+<td>333</td>
+<td>360</td>
+<td>387</td>
+<td>414</td>
+<td>441</td>
+<td>468</td>
+<td>495</td>
+<td>522</td>
+<td>549</td>
+<td>576</td>
+<td>603</td>
+<td>630</td>
+<td>657</td>
+<td>684</td>
+<td>711</td>
+</tr>
+<tr>
+<td rowspan="9" class="Rttt-rl Rttt-rl-lvl3">H</td>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">D</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>10</td>
+<td>37</td>
+<td>64</td>
+<td>91</td>
+<td>118</td>
+<td>145</td>
+<td>172</td>
+<td>199</td>
+<td>226</td>
+<td>253</td>
+<td>280</td>
+<td>307</td>
+<td>334</td>
+<td>361</td>
+<td>388</td>
+<td>415</td>
+<td>442</td>
+<td>469</td>
+<td>496</td>
+<td>523</td>
+<td>550</td>
+<td>577</td>
+<td>604</td>
+<td>631</td>
+<td>658</td>
+<td>685</td>
+<td>712</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>11</td>
+<td>38</td>
+<td>65</td>
+<td>92</td>
+<td>119</td>
+<td>146</td>
+<td>173</td>
+<td>200</td>
+<td>227</td>
+<td>254</td>
+<td>281</td>
+<td>308</td>
+<td>335</td>
+<td>362</td>
+<td>389</td>
+<td>416</td>
+<td>443</td>
+<td>470</td>
+<td>497</td>
+<td>524</td>
+<td>551</td>
+<td>578</td>
+<td>605</td>
+<td>632</td>
+<td>659</td>
+<td>686</td>
+<td>713</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>12</td>
+<td>39</td>
+<td>66</td>
+<td>93</td>
+<td>120</td>
+<td>147</td>
+<td>174</td>
+<td>201</td>
+<td>228</td>
+<td>255</td>
+<td>282</td>
+<td>309</td>
+<td>336</td>
+<td>363</td>
+<td>390</td>
+<td>417</td>
+<td>444</td>
+<td>471</td>
+<td>498</td>
+<td>525</td>
+<td>552</td>
+<td>579</td>
+<td>606</td>
+<td>633</td>
+<td>660</td>
+<td>687</td>
+<td>714</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">E</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>13</td>
+<td>40</td>
+<td>67</td>
+<td>94</td>
+<td>121</td>
+<td>148</td>
+<td>175</td>
+<td>202</td>
+<td>229</td>
+<td>256</td>
+<td>283</td>
+<td>310</td>
+<td>337</td>
+<td>364</td>
+<td>391</td>
+<td>418</td>
+<td>445</td>
+<td>472</td>
+<td>499</td>
+<td>526</td>
+<td>553</td>
+<td>580</td>
+<td>607</td>
+<td>634</td>
+<td>661</td>
+<td>688</td>
+<td>715</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>14</td>
+<td>41</td>
+<td>68</td>
+<td>95</td>
+<td>122</td>
+<td>149</td>
+<td>176</td>
+<td>203</td>
+<td>230</td>
+<td>257</td>
+<td>284</td>
+<td>311</td>
+<td>338</td>
+<td>365</td>
+<td>392</td>
+<td>419</td>
+<td>446</td>
+<td>473</td>
+<td>500</td>
+<td>527</td>
+<td>554</td>
+<td>581</td>
+<td>608</td>
+<td>635</td>
+<td>662</td>
+<td>689</td>
+<td>716</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>15</td>
+<td>42</td>
+<td>69</td>
+<td>96</td>
+<td>123</td>
+<td>150</td>
+<td>177</td>
+<td>204</td>
+<td>231</td>
+<td>258</td>
+<td>285</td>
+<td>312</td>
+<td>339</td>
+<td>366</td>
+<td>393</td>
+<td>420</td>
+<td>447</td>
+<td>474</td>
+<td>501</td>
+<td>528</td>
+<td>555</td>
+<td>582</td>
+<td>609</td>
+<td>636</td>
+<td>663</td>
+<td>690</td>
+<td>717</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">F</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>16</td>
+<td>43</td>
+<td>70</td>
+<td>97</td>
+<td>124</td>
+<td>151</td>
+<td>178</td>
+<td>205</td>
+<td>232</td>
+<td>259</td>
+<td>286</td>
+<td>313</td>
+<td>340</td>
+<td>367</td>
+<td>394</td>
+<td>421</td>
+<td>448</td>
+<td>475</td>
+<td>502</td>
+<td>529</td>
+<td>556</td>
+<td>583</td>
+<td>610</td>
+<td>637</td>
+<td>664</td>
+<td>691</td>
+<td>718</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>17</td>
+<td>44</td>
+<td>71</td>
+<td>98</td>
+<td>125</td>
+<td>152</td>
+<td>179</td>
+<td>206</td>
+<td>233</td>
+<td>260</td>
+<td>287</td>
+<td>314</td>
+<td>341</td>
+<td>368</td>
+<td>395</td>
+<td>422</td>
+<td>449</td>
+<td>476</td>
+<td>503</td>
+<td>530</td>
+<td>557</td>
+<td>584</td>
+<td>611</td>
+<td>638</td>
+<td>665</td>
+<td>692</td>
+<td>719</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>18</td>
+<td>45</td>
+<td>72</td>
+<td>99</td>
+<td>126</td>
+<td>153</td>
+<td>180</td>
+<td>207</td>
+<td>234</td>
+<td>261</td>
+<td>288</td>
+<td>315</td>
+<td>342</td>
+<td>369</td>
+<td>396</td>
+<td>423</td>
+<td>450</td>
+<td>477</td>
+<td>504</td>
+<td>531</td>
+<td>558</td>
+<td>585</td>
+<td>612</td>
+<td>639</td>
+<td>666</td>
+<td>693</td>
+<td>720</td>
+</tr>
+<tr>
+<td rowspan="9" class="Rttt-rl Rttt-rl-lvl3">I</td>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">D</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>19</td>
+<td>46</td>
+<td>73</td>
+<td>100</td>
+<td>127</td>
+<td>154</td>
+<td>181</td>
+<td>208</td>
+<td>235</td>
+<td>262</td>
+<td>289</td>
+<td>316</td>
+<td>343</td>
+<td>370</td>
+<td>397</td>
+<td>424</td>
+<td>451</td>
+<td>478</td>
+<td>505</td>
+<td>532</td>
+<td>559</td>
+<td>586</td>
+<td>613</td>
+<td>640</td>
+<td>667</td>
+<td>694</td>
+<td>721</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>20</td>
+<td>47</td>
+<td>74</td>
+<td>101</td>
+<td>128</td>
+<td>155</td>
+<td>182</td>
+<td>209</td>
+<td>236</td>
+<td>263</td>
+<td>290</td>
+<td>317</td>
+<td>344</td>
+<td>371</td>
+<td>398</td>
+<td>425</td>
+<td>452</td>
+<td>479</td>
+<td>506</td>
+<td>533</td>
+<td>560</td>
+<td>587</td>
+<td>614</td>
+<td>641</td>
+<td>668</td>
+<td>695</td>
+<td>722</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>21</td>
+<td>48</td>
+<td>75</td>
+<td>102</td>
+<td>129</td>
+<td>156</td>
+<td>183</td>
+<td>210</td>
+<td>237</td>
+<td>264</td>
+<td>291</td>
+<td>318</td>
+<td>345</td>
+<td>372</td>
+<td>399</td>
+<td>426</td>
+<td>453</td>
+<td>480</td>
+<td>507</td>
+<td>534</td>
+<td>561</td>
+<td>588</td>
+<td>615</td>
+<td>642</td>
+<td>669</td>
+<td>696</td>
+<td>723</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">E</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>22</td>
+<td>49</td>
+<td>76</td>
+<td>103</td>
+<td>130</td>
+<td>157</td>
+<td>184</td>
+<td>211</td>
+<td>238</td>
+<td>265</td>
+<td>292</td>
+<td>319</td>
+<td>346</td>
+<td>373</td>
+<td>400</td>
+<td>427</td>
+<td>454</td>
+<td>481</td>
+<td>508</td>
+<td>535</td>
+<td>562</td>
+<td>589</td>
+<td>616</td>
+<td>643</td>
+<td>670</td>
+<td>697</td>
+<td>724</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>23</td>
+<td>50</td>
+<td>77</td>
+<td>104</td>
+<td>131</td>
+<td>158</td>
+<td>185</td>
+<td>212</td>
+<td>239</td>
+<td>266</td>
+<td>293</td>
+<td>320</td>
+<td>347</td>
+<td>374</td>
+<td>401</td>
+<td>428</td>
+<td>455</td>
+<td>482</td>
+<td>509</td>
+<td>536</td>
+<td>563</td>
+<td>590</td>
+<td>617</td>
+<td>644</td>
+<td>671</td>
+<td>698</td>
+<td>725</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>24</td>
+<td>51</td>
+<td>78</td>
+<td>105</td>
+<td>132</td>
+<td>159</td>
+<td>186</td>
+<td>213</td>
+<td>240</td>
+<td>267</td>
+<td>294</td>
+<td>321</td>
+<td>348</td>
+<td>375</td>
+<td>402</td>
+<td>429</td>
+<td>456</td>
+<td>483</td>
+<td>510</td>
+<td>537</td>
+<td>564</td>
+<td>591</td>
+<td>618</td>
+<td>645</td>
+<td>672</td>
+<td>699</td>
+<td>726</td>
+</tr>
+<tr>
+<td rowspan="3" class="Rttt-rl Rttt-rl-lvl2">F</td>
+<td class="Rttt-rl Rttt-rl-lvl1">A</td>
+<td>25</td>
+<td>52</td>
+<td>79</td>
+<td>106</td>
+<td>133</td>
+<td>160</td>
+<td>187</td>
+<td>214</td>
+<td>241</td>
+<td>268</td>
+<td>295</td>
+<td>322</td>
+<td>349</td>
+<td>376</td>
+<td>403</td>
+<td>430</td>
+<td>457</td>
+<td>484</td>
+<td>511</td>
+<td>538</td>
+<td>565</td>
+<td>592</td>
+<td>619</td>
+<td>646</td>
+<td>673</td>
+<td>700</td>
+<td>727</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">B</td>
+<td>26</td>
+<td>53</td>
+<td>80</td>
+<td>107</td>
+<td>134</td>
+<td>161</td>
+<td>188</td>
+<td>215</td>
+<td>242</td>
+<td>269</td>
+<td>296</td>
+<td>323</td>
+<td>350</td>
+<td>377</td>
+<td>404</td>
+<td>431</td>
+<td>458</td>
+<td>485</td>
+<td>512</td>
+<td>539</td>
+<td>566</td>
+<td>593</td>
+<td>620</td>
+<td>647</td>
+<td>674</td>
+<td>701</td>
+<td>728</td>
+</tr>
+<tr>
+<td class="Rttt-rl Rttt-rl-lvl1">C</td>
+<td>27</td>
+<td>54</td>
+<td>81</td>
+<td>108</td>
+<td>135</td>
+<td>162</td>
+<td>189</td>
+<td>216</td>
+<td>243</td>
+<td>270</td>
+<td>297</td>
+<td>324</td>
+<td>351</td>
+<td>378</td>
+<td>405</td>
+<td>432</td>
+<td>459</td>
+<td>486</td>
+<td>513</td>
+<td>540</td>
+<td>567</td>
+<td>594</td>
+<td>621</td>
+<td>648</td>
+<td>675</td>
+<td>702</td>
+<td>729</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">ttt.theme=</span><span class="st">&quot;default&quot;</span>)  <span class="co"># Select the &quot;default&quot; theme</span></span></code></pre></div>
+</div>
+<div id="custom-styling" class="section level3">
+<h3>Custom styling</h3>
 <p>As mentioned in the introduction, changing the table’s appearance is accomplished using CSS. In order to make this possible, <code>ttt</code> places “hooks” in the table in the form of <code>class</code> attributes on various HTML elements.</p>
 <p>The first thing to know is that the whole table is enclosed in a <code>&lt;div class=&quot;Rttt&quot;&gt;</code> element. The allows specific formatting to be applied to tables output by <code>ttt</code> without interfering with other tables in the same document.</p>
+<p>The next thing is that all row labels have the class <code>Rttt-rl</code>, and all column labels have the class <code>Rttt-cl</code>. Furthermore, there are different classes for each <em>level</em> or nesting: <code>Rttt-rl-lvl1</code> for the first (i.e. innermost) level or row labels, <code>Rttt-rl-lvl2</code> for the second level, and so on, and similarly for the column labels with <code>cl</code> instead of <code>rl</code>.</p>
+</div>
 <div id="example-conditional-formatting" class="section level3">
 <h3>Example: conditional formatting</h3>
 <p>A <code>render</code> function can actually add a <code>html.class</code> attribute to its return value. The value of this attribute will be assigned to the resulting HTML element’s <code>class</code> attribute, allowing you to target that element with specific formatting.</p>

@@ -1,3 +1,12 @@
+.onLoad <- function(libname, pkgname) {
+  op <- list(
+    ttt.theme = "default"
+  )
+  toset <- !(names(op) %in% names(options()))
+  if (any(toset)) options(op[toset])
+  invisible()
+}
+
 namesOrLabels <- function(x) {
     sapply(seq_along(x), function(i) {
         if (!is.null(attr(x[[i]], "label"))) {
@@ -461,17 +470,18 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), ..., lab, capti
 #'
 #' @param x An object returned by \code{\link{ttt}}.
 #' @param ... Further arguments passed on to other \code{print} methods.
+#' @param theme A theme (either "default" or "booktabs").
 #' @return Returns \code{x} invisibly.
 #' @details In an interactive context, the rendered table will be displayed in
 #' a web browser. Otherwise, the HTML code will be printed as text.
 #' @export
-print.ttt <- function(x, ...) {
+print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
     if (interactive()) {
         z <- htmltools::HTML(x)
-        default.style <- htmltools::htmlDependency("ttt", "1.0",
-            src=system.file(package="ttt", "ttt_defaults_1.0"),
-            stylesheet="ttt_defaults.css")
-        z <- htmltools::div(class="Rttt", default.style, z)
+        style <- htmltools::htmlDependency("ttt", "1.0",
+            src=system.file(package="ttt", sprintf("ttt_%s_1.0", theme)),
+            stylesheet=sprintf("ttt_%s.css", theme))
+        z <- htmltools::div(class="Rttt", style, z)
         z <- htmltools::browsable(z)
         print(z, ...) # Calls htmltools:::print.html(z, ...)
     } else {
@@ -485,19 +495,20 @@ print.ttt <- function(x, ...) {
 #'
 #' @param x An object returned by \code{\link{ttt}}.
 #' @param ... Further arguments passed on to \code{knitr::knit_print}.
+#' @param theme A theme (either "default" or "booktabs").
 #' @importFrom knitr knit_print
 #' @export
-knit_print.ttt <- function(x, ...) {
+knit_print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
     knit_to_html <-
         !is.null(knitr::opts_knit$get("rmarkdown.pandoc.to")) &&
         grepl("^html", knitr::opts_knit$get("rmarkdown.pandoc.to"))
 
     if (knit_to_html) {
         z <- htmltools::HTML(x)
-        default.style <- htmltools::htmlDependency("ttt", "1.0",
-            src=system.file(package="ttt", "ttt_defaults_1.0"),
-            stylesheet="ttt_defaults.css")
-        z <- htmltools::div(class="Rttt", default.style, z)
+        style <- htmltools::htmlDependency("ttt", "1.0",
+            src=system.file(package="ttt", sprintf("ttt_%s_1.0", theme)),
+            stylesheet=sprintf("ttt_%s.css", theme))
+        z <- htmltools::div(class="Rttt", style, z)
         knitr::knit_print(z, ...)
     } else {
         knitr::knit_print(as.character(x), ...)

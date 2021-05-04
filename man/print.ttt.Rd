@@ -4,12 +4,14 @@
 \alias{print.ttt}
 \title{Print \code{ttt} object}
 \usage{
-\method{print}{ttt}(x, ...)
+\method{print}{ttt}(x, ..., theme = getOption("ttt.theme"))
 }
 \arguments{
 \item{x}{An object returned by \code{\link{ttt}}.}
 
 \item{...}{Further arguments passed on to other \code{print} methods.}
+
+\item{theme}{A theme (either "default" or "booktabs").}
 }
 \value{
 Returns \code{x} invisibly.
