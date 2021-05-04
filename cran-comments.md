@@ -1,4 +1,4 @@
-# Version 0.5
+# Version 1.0
 
 This is the first submission of `ttt` to CRAN.
 
@@ -10,15 +10,26 @@ This is the first submission of `ttt` to CRAN.
 * travis-ci:
   - Ubuntu Linux 16.04.6 LTS (xenial) (release and devel)
 * win-builder:
-  - Windows Server 2008 (release (4.0.4) and devel (unstable))
+  - Windows Server 2008 (release (4.0.5) and devel (4.1.0 alpha))
+    - 1 NOTE:
+      * New submission
 * R-hub builder (https://builder.r-hub.io)
   - Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+    - 1 NOTE:
+      * New submission
   - Ubuntu Linux 20.04.1 LTS, R-release, GCC
+    - 1 NOTE:
+      * New submission
   - Fedora Linux, R-devel, clang, gfortran
+    - 2 NOTEs:
+      * New submission
+      * unable to verify current time
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+0 errors | 0 warnings | 1 note
+
+* unable to verify current time
 
 ## Reverse dependencies
 
