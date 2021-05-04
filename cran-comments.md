@@ -1,6 +1,7 @@
 # Version 1.0
 
-Note: I am resubmitting because there were some small errors in the vignette that I have corrected.
+Note: I am resubmitting because I found some small errors in the vignette
+and fixed them.
 
 This is the first submission of `ttt` to CRAN.
 
