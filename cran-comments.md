@@ -1,9 +1,32 @@
 # Version 1.0
 
-Note: I am resubmitting because I found some small errors in the vignette
-and fixed them.
-
 This is the first submission of `ttt` to CRAN.
+
+## Fixing the following comments from reviewer and resubmitting
+
+* From: Gregor Seyer <gregor.seyer@wu.ac.at>
+* Date: Thu, 6 May 2021 09:56:56 +0200
+
+  - Please do not start the description with "This package", package name,
+    title or similar.
+
+    * Changed description.
+
+  - Please write TRUE and FALSE instead of T and F. (Please don't use 'T' or
+    'F' as vector names.)
+
+    * Done.
+
+  - Please add \value to .Rd files regarding exported methods and explain the
+    functions results in the documentation. Please write about the structure of
+    the output (class) and also what the output means. (If a function does not
+    return a value, please document that too, e.g. \value{No return value,
+    called for side effects} or similar)
+
+    Missing Rd-tags:
+    knit_print.ttt.Rd: \value
+
+    * \value added.
 
 ## Test environments
 

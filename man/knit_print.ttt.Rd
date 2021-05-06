@@ -13,6 +13,10 @@
 
 \item{theme}{A theme (either "default" or "booktabs").}
 }
+\value{
+Returns a \code{character} string. See \code{knitr::knit_print} for
+how this value is used.
+}
 \description{
 Method for printing in a \code{knitr} context
 }

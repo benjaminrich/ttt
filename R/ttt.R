@@ -133,13 +133,13 @@ ttt <- function(x, ...) {
 #' @importFrom Formula Formula model.part
 ttt.data.frame <- function(x, formula, ..., render, lab, caption, footnote,
     expand.along=c("rows", "columns"), drop=c("both", "rows", "columns", "none"),
-    collapse.cells=TRUE, topclass=NULL, id=NULL, css=NULL, row.names=T) {
+    collapse.cells=TRUE, topclass=NULL, id=NULL, css=NULL, row.names=TRUE) {
 
     if (missing(formula)) {
         value <- unlist(as.list(format(x)))
         eg <- expand.grid(rownames(x), colnames(x))
-        rowvars <- eg[, 1, drop=F]
-        colvars <- eg[, 2, drop=F]
+        rowvars <- eg[, 1, drop=FALSE]
+        colvars <- eg[, 2, drop=FALSE]
         if (missing(lab) || is.null(lab)) {
             names(rowvars) <- " " # Avoid displaying anything in the row label header
         } else {
@@ -179,13 +179,13 @@ ttt.formula <- function(x, data, ..., render, lab, caption, footnote,
     f <- Formula(x)
     m <- model.frame(f, data=data, na.action=na.pass)
     if (is.null(dummy)) {
-        x <- model.part(f, data=m, lhs=1, drop=T)
+        x <- model.part(f, data=m, lhs=1, drop=TRUE)
         xname <- as.character(f[[2]])
     } else {
         x <- dummy
         xname <- "dummy"
     }
-    rowvars <- model.part(f, data=m, rhs=1, drop=F)
+    rowvars <- model.part(f, data=m, rhs=1, drop=FALSE)
     if (ncol(rowvars) == 0) {
         rowvars <- NULL
         if (missing(lab) || is.null(lab)) {
@@ -194,7 +194,7 @@ ttt.formula <- function(x, data, ..., render, lab, caption, footnote,
         attr(lab, ".suppressrowlabels") <- TRUE
     }
     if (length(f)[2] > 1) {
-        colvars <- rev(model.part(f, data=m, rhs=2, drop=F))
+        colvars <- rev(model.part(f, data=m, rhs=2, drop=FALSE))
     } else {
         colvars <- data.frame(rep(xname, nrow(m)))
         names(colvars) <- xname
@@ -262,8 +262,8 @@ ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote
     text <- unlist(text)
     html.class <- unlist(html.class)
     if (expand.along != "rows") {
-        text <- matrix(text, nrow=nrow(counts), byrow=T)
-        html.class <- matrix(html.class, nrow=nrow(counts), byrow=T)
+        text <- matrix(text, nrow=nrow(counts), byrow=TRUE)
+        html.class <- matrix(html.class, nrow=nrow(counts), byrow=TRUE)
     }
 
     a <- attributes(counts)
@@ -271,14 +271,14 @@ ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote
     names(a$col.vars) <- namesOrLabels(colvars)
     if (nstats > 0) {
         if (expand.along == "rows") {
-            counts <- counts[rep(seq_len(nrow(counts)), each=nstats),, drop=F]
+            counts <- counts[rep(seq_len(nrow(counts)), each=nstats),, drop=FALSE]
             a$row.vars <- c(a$row.vars, setNames(list(stats), statslab))
             if (missing(lab) || is.null(lab)) {
                 lab <- list() # Special value
             }
             attr(lab, ".suppressrowlabels") <- FALSE
         } else {
-            counts <- counts[,rep(seq_len(ncol(counts)), each=nstats), drop=F]
+            counts <- counts[,rep(seq_len(ncol(counts)), each=nstats), drop=FALSE]
             a$col.vars <- c(a$col.vars, setNames(list(stats), statslab))
         }
         counts[is.na(text)] <- 0
@@ -326,8 +326,8 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, f
     xrv <- attr(x, "row.vars")
     xcv <- attr(x, "col.vars")
 
-    rlab <- rev(expand.grid(rev(xrv), stringsAsFactors=F))
-    clab <- rev(expand.grid(rev(xcv), stringsAsFactors=F))
+    rlab <- rev(expand.grid(rev(xrv), stringsAsFactors=FALSE))
+    clab <- rev(expand.grid(rev(xcv), stringsAsFactors=FALSE))
 
     zr <- apply(x, 1, sum) == 0
     zc <- apply(x, 2, sum) == 0
@@ -340,10 +340,10 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, f
     }
 
     if (drop == "both") {
-        text <- text[!zr, !zc, drop=F]
-        hcls <- hcls[!zr, !zc, drop=F]
-        rlab <- rlab[!zr, , drop=F]
-        clab <- clab[!zc, , drop=F]
+        text <- text[!zr, !zc, drop=FALSE]
+        hcls <- hcls[!zr, !zc, drop=FALSE]
+        rlab <- rlab[!zr, , drop=FALSE]
+        clab <- clab[!zc, , drop=FALSE]
     } else if (drop == "rows") {
         text <- text[!zr, ]
         hcls <- hcls[!zr, ]
@@ -357,7 +357,7 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, f
     collapseLabels <- function(lab) {
         res <- lapply(seq_along(lab), function(i) {
             z <- lab[,i]
-            z2 <- apply(lab[,1:i, drop=F], 1, paste0, collapse=".")
+            z2 <- apply(lab[,1:i, drop=FALSE], 1, paste0, collapse=".")
             n <- length(z)
             z[c(FALSE, z2[-1] == z2[-n])] <- ""
             z
@@ -534,6 +534,8 @@ print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
 #' @param x An object returned by \code{\link{ttt}}.
 #' @param ... Further arguments passed on to \code{knitr::knit_print}.
 #' @param theme A theme (either "default" or "booktabs").
+#' @return Returns a \code{character} string. See \code{knitr::knit_print} for
+#' how this value is used.
 #' @importFrom knitr knit_print
 #' @export
 knit_print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {

@@ -24,7 +24,7 @@ ttt(x, ...)
   topclass = NULL,
   id = NULL,
   css = NULL,
-  row.names = T
+  row.names = TRUE
 )
 
 \method{ttt}{formula}(
