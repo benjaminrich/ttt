@@ -1,12 +1,12 @@
 Package: ttt
 Type: Package
-Version: 1.0
+Version: 1.1-dev
 Date: 2021-05-06
 Title: The Table Tool
 Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
 URL: https://github.com/benjaminrich/ttt
 BugReports: https://github.com/benjaminrich/ttt/issues
-Description: Create structured, formatted HTML tables of in a flexible and
+Description: Create structured, formatted HTML tables in a flexible and
     convenient way.
 License: GPL-3
 Imports: stats,Formula,knitr,htmltools
