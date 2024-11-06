@@ -473,7 +473,7 @@ ttt.ftable <- function(x, text=matrix(as.character(x), nrow(x)), lab, caption, f
     }
 
     if (!missing(topclass) && !is.null(topclass)) {
-        topclass <- sprintf(' class="%s"', paste0(gsub(".", "-", make.names(topclass), fixed=TRUE)), collapse=" ")
+        topclass <- sprintf(' class="%s"', paste0(gsub(".", "-", make.names(topclass), fixed=TRUE), collapse=" "))
     } else {
         topclass <- ""
     }

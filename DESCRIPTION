@@ -1,7 +1,7 @@
 Package: ttt
 Type: Package
-Version: 1.1.0
-Date: 2022-03-16
+Version: 1.1.1
+Date: 2024-11-06
 Title: The Table Tool
 Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
 URL: https://github.com/benjaminrich/ttt
