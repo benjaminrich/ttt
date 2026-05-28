@@ -230,7 +230,7 @@ ttt.numeric <- function(x, rowvars, colvars, ..., render, lab, caption, footnote
         class(counts) <- "ftable"
         dim(counts) <- c(1, length(counts))
         attr(counts, "row.vars") <- list()
-        attr(counts, "col.vars") <- dimnames(tab)
+        attr(counts, "col.vars") <- rev(dimnames(tab))
     } else {
         counts <- ftable(table(c(rev(rowvars), rev(colvars))), row.vars=names(rowvars), col.vars=names(colvars))
     }
@@ -557,5 +557,64 @@ knit_print.ttt <- function(x, ..., theme=getOption("ttt.theme")) {
     } else {
         knitr::knit_print(as.character(x), ...)
     }
+}
+
+#' Combine tables vertically
+#'
+#' @param ... One or more objects returned by \code{\link{ttt}}.
+#' @return A \code{character} which contains an HTML table fragment. It has
+#' additional class attributes that cause it to be displayed in a browser in an
+#' interactive context, and rendered as HTML in a \code{knitr} context.
+#' @section Warning:
+#' This function works in a very simple manner, removing certain HTML
+#' tags. It may not be completely robust. In particular, the tables
+#' being combined need to have the same number of columns.
+#' @examples
+#' dat <- fread(text="
+#' ID subject test score
+#' 1  Math    A    1
+#' 1  Math    B    2
+#' 1  Math    C    3
+#' 1  Physics D    4
+#' 1  Physics E    5
+#' 1  Physics F    6
+#' 2  Math    A    7
+#' 2  Math    C    8
+#' 2  Physics E    9
+#' 3  Math    C    2
+#' 3  Physics D    6
+#' ")
+#'
+#' rndr.stats <- function(x) {
+#'     with(table1::stats.apply.rounding(table1::stats.default(x)), {
+#'         c(N=N, Mean=MEAN, SD=SD)
+#'     })
+#' }
+#'
+#' t1 <- ttt(score ~ ID | test + subject, data=dat)
+#' t2 <- ttt(score ~  1 | test + subject, data=dat, render=rndr.stats)
+#' rbind_ttt(t1, t2)
+#' @export
+rbind_ttt <- function(...) {
+    args <- list(...)
+    nargs <- length(args)
+
+    if (nargs == 0) return(NULL)
+    if (nargs == 1) return(args[[1]])
+
+    x <- do.call(paste0,
+        lapply(seq_len(nargs), function(i) {
+            x <- args[[i]]
+            if (i > 1) {
+                x <- gsub("^.*<table>", "", x)
+                x <- gsub("</?thead>", "", x)
+            }
+            if (i < nargs) {
+                x <- gsub("</table>.*$", "", x)
+            }
+            x
+        })
+    )
+    structure(x, class=c("ttt", "html", "character"), html=TRUE)
 }
 

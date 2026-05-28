@@ -141,15 +141,15 @@ convenient way.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{data.frame}: The \code{data.frame} method.
+\item \code{ttt(data.frame)}: The \code{data.frame} method.
 
-\item \code{formula}: The \code{formula} method.
+\item \code{ttt(formula)}: The \code{formula} method.
 
-\item \code{numeric}: The \code{numeric} method.
+\item \code{ttt(numeric)}: The \code{numeric} method.
 
-\item \code{ftable}: The \code{ftable} method.
+\item \code{ttt(ftable)}: The \code{ftable} method.
+
 }}
-
 \examples{
 # mtcars examples
 ttt(mtcars)
